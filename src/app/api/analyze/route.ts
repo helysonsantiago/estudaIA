@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
 
     // Validate file size (25MB limit)
     const maxSize = 25 * 1024 * 1024; // 25MB in bytes
-    if (file.size > maxSize) {
+    if (file && file.size > maxSize) {
       console.error('Arquivo muito grande:', file.size, 'bytes');
       return NextResponse.json({ error: 'Arquivo muito grande. Máximo 25MB.' }, { status: 400 });
     }
@@ -62,6 +62,9 @@ export async function POST(request: NextRequest) {
       }
       const bytes = await res.arrayBuffer();
       buffer = Buffer.from(bytes);
+      if (buffer.length > maxSize) {
+        return NextResponse.json({ error: 'Arquivo muito grande. Máximo 25MB.' }, { status: 400 });
+      }
     }
 
     // Extract text based on file type
@@ -121,7 +124,16 @@ export async function POST(request: NextRequest) {
         model = 'gemini-flash-latest';
       }
       console.log('IA selecionada:', provider, 'modelo:', model);
-      analysis = await generateAnalysis(extractedText, file.name, {
+      const safeFilename = file ? file.name : (overrideFilename || (() => {
+        try {
+          const u = new URL(blobUrl!);
+          const last = u.pathname.split('/').pop() || 'arquivo';
+          return decodeURIComponent(last);
+        } catch {
+          return 'arquivo';
+        }
+      })());
+      analysis = await generateAnalysis(extractedText, safeFilename, {
         provider: provider || undefined,
         apiKey: apiKey || undefined,
         model: model || undefined,
@@ -152,7 +164,15 @@ export async function POST(request: NextRequest) {
     // Create result object
     const result: AnalysisResult = {
       id: Date.now().toString(),
-      filename: file.name,
+      filename: (file ? file.name : (overrideFilename || (() => {
+        try {
+          const u = new URL(blobUrl!);
+          const last = u.pathname.split('/').pop() || 'arquivo';
+          return decodeURIComponent(last);
+        } catch {
+          return 'arquivo';
+        }
+      })())),
       uploadDate: new Date().toISOString(),
       summary: analysis.summary,
       references: analysis.references || [],
