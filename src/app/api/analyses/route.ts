@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { saveAnalysis, getAllAnalyses, getAnalysisById, deleteAnalysis } from '@/lib/database';
+export const runtime = 'nodejs';
 
 // GET /api/analyses - List all analyses
 export async function GET(request: NextRequest) {

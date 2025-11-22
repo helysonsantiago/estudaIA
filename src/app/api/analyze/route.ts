@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { extractTextFromPDF, extractTextFromDOCX, extractTextFromPPTX, getFileExtension } from '@/lib/fileProcessing';
 import { generateAnalysis, extractTextWithGeminiFromPDF } from '@/lib/aiService';
 import { AnalysisResult } from '@/types/analysis';
+export const runtime = 'nodejs';
 
 export async function POST(request: NextRequest) {
   try {

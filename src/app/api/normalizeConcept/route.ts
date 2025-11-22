@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { normalizeConcept } from '@/lib/aiService'
+export const runtime = 'nodejs'
 
 export async function POST(request: NextRequest) {
   try {

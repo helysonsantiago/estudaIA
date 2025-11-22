@@ -133,7 +133,7 @@ export function ModernResultsDisplay({ result, onBack }: ModernResultsDisplayPro
           doc.addPage();
           yPosition = 20;
         }
-        doc.text(`${index + 1}. ${concept}`, 20, yPosition);
+        doc.text(`${index + 1}. ${concept.concept}`, 20, yPosition);
         yPosition += 10;
       });
     }
@@ -154,9 +154,9 @@ export function ModernResultsDisplay({ result, onBack }: ModernResultsDisplayPro
           yPosition = 20;
         }
         doc.setFontSize(12);
-        doc.text(`Q: ${card.question}`, 20, yPosition);
+        doc.text(`Q: ${card.front}`, 20, yPosition);
         yPosition += 10;
-        doc.text(`A: ${card.answer}`, 20, yPosition);
+        doc.text(`A: ${card.back}`, 20, yPosition);
         yPosition += 15;
       });
     }
