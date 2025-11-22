@@ -1,0 +1,334 @@
+@import "tailwindcss";
+
+/* Modern Design System - Cores profissionais e elegantes */
+:root {
+  --background: 0 0% 100%;
+  --foreground: 220 15% 12%;
+  --card: 0 0% 100%;
+  --card-foreground: 220 15% 12%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 220 15% 12%;
+  --primary: 221 83% 53%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 210 40% 96%;
+  --secondary-foreground: 220 15% 12%;
+  --muted: 210 40% 96%;
+  --muted-foreground: 215 16% 47%;
+  --accent: 210 40% 96%;
+  --accent-foreground: 220 15% 12%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 214 32% 91%;
+  --input: 214 32% 91%;
+  --ring: 221 83% 53%;
+  --radius: 0.75rem;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  color-scheme: light;
+  --gradient-start: 260 84% 58%;
+  --gradient-end: 200 95% 55%;
+}
+
+/* Removido tema escuro - sistema apenas em modo claro */
+
+/* Tema personalizado adicional */
+.theme-blue {
+  --primary: 221 83% 53%;
+  --primary-foreground: 0 0% 100%;
+  --ring: 221 83% 53%;
+}
+
+.theme-purple {
+  --primary: 262 84% 58%;
+  --primary-foreground: 0 0% 100%;
+  --ring: 262 84% 58%;
+}
+
+.theme-green {
+  --primary: 142 76% 36%;
+  --primary-foreground: 0 0% 100%;
+  --ring: 142 76% 36%;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --border-color: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --border-radius: var(--radius);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --shadow-sm: var(--shadow-sm);
+  --shadow: var(--shadow);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+  --shadow-xl: var(--shadow-xl);
+}
+
+@keyframes accordion-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+  }
+}
+
+@keyframes accordion-up {
+  from {
+    height: var(--radix-accordion-content-height);
+  }
+  to {
+    height: 0;
+  }
+}
+
+.animate-accordion-down {
+  animation: accordion-down 0.2s ease-out;
+}
+
+.animate-accordion-up {
+  animation: accordion-up 0.2s ease-out;
+}
+
+/* Estilos base modernos */
+* {
+  border-color: var(--border-color);
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Animações modernas */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out;
+}
+
+.animate-slide-in {
+  animation: slide-in 0.5s ease-out;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.3s ease-out;
+}
+
+@keyframes gradient-move {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-move 8s ease infinite;
+}
+
+.animated-gradient-text {
+  background: linear-gradient(135deg, hsl(var(--color-primary)) 0%, hsl(262 84% 58%) 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-move 8s ease infinite;
+}
+
+.glow-soft {
+  box-shadow: 0 0 30px hsl(var(--color-primary) / 0.25);
+}
+
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.app-bg-trae {
+  background:
+    radial-gradient(1000px 500px at 10% -10%, hsl(var(--gradient-start) / 0.14) 0%, transparent 60%),
+    radial-gradient(800px 400px at 90% 0%, hsl(var(--gradient-end) / 0.12) 0%, transparent 55%),
+    linear-gradient(180deg, hsl(var(--background)), hsl(var(--background)));
+}
+
+.grid-lines {
+  background-image:
+    linear-gradient(to bottom, hsl(var(--border) / 0.18) 1px, transparent 1px),
+    linear-gradient(to right, hsl(var(--border) / 0.18) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.glass-card {
+  background-color: hsl(var(--card) / 0.6);
+  backdrop-filter: saturate(140%) blur(12px);
+  border: 1px solid hsl(var(--border) / 0.4);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.glass-card:hover {
+  border-color: hsl(var(--primary) / 0.5);
+  box-shadow: 0 18px 40px -20px hsl(var(--gradient-end) / 0.35);
+  transform: translateY(-2px);
+}
+
+.pill-trigger {
+  border-radius: 9999px;
+  transition: all 0.2s ease;
+}
+
+.pill-trigger[data-state="active"] {
+  background: linear-gradient(120deg, hsl(var(--gradient-start)), hsl(var(--gradient-end)));
+  color: #fff;
+  box-shadow: 0 12px 28px -16px hsl(var(--gradient-end) / 0.5);
+}
+
+.cta-primary {
+  border-radius: 9999px;
+  background: linear-gradient(120deg, hsl(var(--gradient-start)), hsl(var(--gradient-end)));
+  color: #fff;
+  box-shadow: 0 20px 40px -20px hsl(var(--gradient-end) / 0.5);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cta-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 28px 60px -28px hsl(var(--gradient-end) / 0.55);
+}
+
+.accent-icon {
+  background: linear-gradient(135deg, hsl(var(--gradient-start)), hsl(var(--gradient-end)));
+  color: #fff;
+}
+
+/* Utilitários modernos */
+.glass-effect {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Removido estilos dark mode */
+
+.gradient-bg {
+  background: linear-gradient(135deg, hsl(var(--color-primary)) 0%, hsl(262 84% 58%) 100%);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, hsl(var(--color-primary)) 0%, hsl(262 84% 58%) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-animated {
+  background: linear-gradient(135deg, hsl(var(--gradient-start)) 0%, hsl(var(--gradient-end)) 100%);
+  background-size: 200% 200%;
+  animation: gradient-move 12s ease infinite;
+}
+
+.text-gradient-animated {
+  background: linear-gradient(135deg, hsl(var(--gradient-start)) 0%, hsl(var(--gradient-end)) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  background-size: 200% 200%;
+  animation: gradient-move 12s ease infinite;
+}
+
+@keyframes gradient-move {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.hover-glow {
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+.hover-glow:hover {
+  box-shadow: 0 10px 25px -5px hsl(var(--gradient-start) / 0.25), 0 8px 16px -8px hsl(var(--gradient-end) / 0.25);
+  transform: translateY(-2px);
+}
+
+/* Scrollbar moderna */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-secondary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-muted-foreground);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary);
+}
