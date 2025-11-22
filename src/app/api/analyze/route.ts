@@ -10,13 +10,16 @@ export async function POST(request: NextRequest) {
     
     const formData = await request.formData();
     const file = formData.get('file') as File;
+    const blobUrl = formData.get('blobUrl') as string | null;
     const provider = formData.get('provider') as string | null;
     const apiKey = formData.get('apiKey') as string | null;
     let model = formData.get('model') as string | null;
+    const overrideFilename = formData.get('filename') as string | null;
+    const overrideContentType = formData.get('contentType') as string | null;
     
-    console.log('Arquivo recebido:', file?.name, 'Tamanho:', file?.size);
+    console.log('Arquivo recebido:', file?.name || overrideFilename, 'Tamanho:', file?.size, 'blobUrl?', !!blobUrl);
     
-    if (!file) {
+    if (!file && !blobUrl) {
       console.error('Nenhum arquivo enviado');
       return NextResponse.json({ error: 'Nenhum arquivo enviado' }, { status: 400 });
     }
@@ -30,7 +33,13 @@ export async function POST(request: NextRequest) {
 
     // Validate file type
     const allowedExtensions = ['pdf', 'docx', 'pptx'];
-    const fileExtension = getFileExtension(file.name);
+    let fileExtension = file ? getFileExtension(file.name) : (overrideFilename ? getFileExtension(overrideFilename) : '');
+    if (!fileExtension && overrideContentType) {
+      const ct = overrideContentType.toLowerCase();
+      if (ct.includes('pdf')) fileExtension = 'pdf';
+      else if (ct.includes('presentation')) fileExtension = 'pptx';
+      else if (ct.includes('wordprocessingml')) fileExtension = 'docx';
+    }
     
     console.log('Extensão do arquivo:', fileExtension);
     
@@ -42,8 +51,18 @@ export async function POST(request: NextRequest) {
     }
 
     // Convert file to buffer
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
+    let buffer: Buffer;
+    if (file) {
+      const bytes = await file.arrayBuffer();
+      buffer = Buffer.from(bytes);
+    } else {
+      const res = await fetch(blobUrl!);
+      if (!res.ok) {
+        return NextResponse.json({ error: 'Falha ao baixar arquivo do Blob' }, { status: 502 });
+      }
+      const bytes = await res.arrayBuffer();
+      buffer = Buffer.from(bytes);
+    }
 
     // Extract text based on file type
     let extractedText = '';

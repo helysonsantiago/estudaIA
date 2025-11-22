@@ -11,6 +11,7 @@ import { History } from '@/components/History';
 import { addToHistory } from '@/lib/history';
 import { getApiConfig } from '@/lib/apiConfig';
 import { ModernLayout } from '@/components/ModernLayout';
+import { upload } from '@vercel/blob/client';
 
 export default function Home() {
   const [isUploading, setIsUploading] = useState(false);
@@ -81,7 +82,6 @@ export default function Home() {
     }, 1500);
     
     const formData = new FormData();
-    formData.append('file', file);
     
     let providerLabel: string | null = null;
     try {
@@ -108,20 +108,46 @@ export default function Home() {
     } catch {}
 
     try {
-      const response = await fetch('/api/analyze', {
-        method: 'POST',
-        body: formData,
-      });
+      let response: Response;
+      if (file.size > 4.5 * 1024 * 1024) {
+        const newBlob = await upload(file.name, file, {
+          access: 'public',
+          handleUploadUrl: '/api/blob/upload',
+          multipart: true,
+        });
+        const blobUrl = newBlob.url || newBlob.downloadUrl;
+        const analyzeForm = new FormData();
+        analyzeForm.append('blobUrl', blobUrl);
+        analyzeForm.append('filename', file.name);
+        analyzeForm.append('contentType', file.type || '');
+        if (providerLabel) analyzeForm.append('provider', (providerLabel.includes('Google') ? 'google' : providerLabel.includes('OpenAI') ? 'openai' : providerLabel.includes('Anthropic') ? 'anthropic' : providerLabel.includes('Grok') ? 'grok' : ''));
+        try {
+          const config = getApiConfig() as any;
+          const provider = analyzeForm.get('provider')?.toString() || null;
+          if (provider && config?.[provider]?.apiKey) {
+            analyzeForm.append('apiKey', config[provider].apiKey);
+            if (config[provider]?.model) analyzeForm.append('model', config[provider].model);
+          }
+        } catch {}
+        response = await fetch('/api/analyze', { method: 'POST', body: analyzeForm });
+      } else {
+        formData.append('file', file);
+        response = await fetch('/api/analyze', { method: 'POST', body: formData });
+      }
 
       if (!response.ok) {
         let errorMessage = 'Erro ao processar arquivo';
-        try {
-          const errorData = await response.json();
-          errorMessage = errorData.error || errorMessage;
-        } catch (e) {
-          const errorText = await response.text();
-          console.error('Server error response:', errorText);
-          errorMessage = 'Erro no servidor. Verifique o console para detalhes.';
+        const contentType = response.headers.get('content-type') || '';
+        if (contentType.includes('application/json')) {
+          try {
+            const errorData = await response.json();
+            errorMessage = errorData.error || errorMessage;
+          } catch {}
+        } else {
+          try {
+            const errorText = await response.text();
+            errorMessage = errorText || errorMessage;
+          } catch {}
         }
         throw new Error(errorMessage);
       }

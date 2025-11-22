@@ -45,6 +45,9 @@ Após o upload, a IA gera automaticamente:
 - **OpenAI API** para análise com IA
 - **Processamento de arquivos**: PDF, DOCX, PPTX
 
+### Armazenamento
+- **Vercel Blob** para uploads grandes diretamente do navegador (evita o limite de payload das funções)
+
 ### Bibliotecas de Processamento
 - **pdf-parse** para extração de texto de PDFs
 - **mammoth** para extração de texto de DOCX
@@ -79,6 +82,13 @@ Após o upload, a IA gera automaticamente:
    ```
    OPENAI_API_KEY=sua_chave_aqui
    ```
+
+    Para uploads maiores que ~4.5MB em Vercel, configure também o Vercel Blob:
+    ```
+    BLOB_READ_WRITE_TOKEN=seu_token_blob
+    # Opcional para testes locais com callback via túnel
+    # VERCEL_BLOB_CALLBACK_URL=https://seu-dominio-publico.ngrok.io
+    ```
 
 4. **Execute o servidor de desenvolvimento**
    ```bash
@@ -143,6 +153,23 @@ O projeto usa o modelo **GPT-4o-mini** da OpenAI, que oferece:
 - **Extração de texto**: Implementação simplificada para demonstração
 - **Exportação PDF**: Funcionalidade básica (pode ser expandida)
 - **Histórico**: Armazenamento em sessionStorage (pode ser migrado para banco de dados)
+
+### Uploads grandes (Vercel Blob)
+- Em ambientes Vercel, requisições para funções têm limite de payload (~4.5MB). Para arquivos maiores, o upload é feito diretamente do navegador para o Blob com token seguro.
+- Passos para habilitar:
+  - Crie um Blob Store no dashboard da Vercel (Storage → Blob) e conecte ao projeto.
+  - Garanta a variável `BLOB_READ_WRITE_TOKEN` no projeto. Para desenvolvimento local, coloque o valor em `.env.local`.
+- Fluxo implementado:
+  - Cliente usa `upload` do SDK com multipart:
+    - `src/app/page.tsx:111` chama `upload(file.name, file, { access: 'public', handleUploadUrl: '/api/blob/upload', multipart: true })`.
+  - Rota para gerar token e receber eventos de upload:
+    - `src/app/api/blob/upload/route.ts:1` usa `handleUpload` de `@vercel/blob/client` e restringe `allowedContentTypes`.
+  - Análise consome `blobUrl`:
+    - `src/app/api/analyze/route.ts:52` baixa o conteúdo do `blobUrl` e processa.
+- Tipos suportados na análise: `pdf`, `docx`, `pptx`. O UI permite planilhas, mas serão rejeitadas pelo backend.
+- Erros comuns:
+  - `Vercel Blob: Failed to retrieve the client token`: configure `BLOB_READ_WRITE_TOKEN` no ambiente (e em `.env.local` para rodar localmente).
+  - `413 FUNCTION_PAYLOAD_TOO_LARGE`: use o fluxo de upload via Blob (já implementado).
 
 ### Segurança
 - Chaves de API são armazenadas apenas no servidor (variáveis de ambiente)
