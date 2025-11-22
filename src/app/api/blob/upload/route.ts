@@ -21,7 +21,7 @@ export async function POST(request: Request) {
         }
       },
       onUploadCompleted: async ({ blob }) => {
-        console.log('[Blob] Upload concluído', blob.url, blob.size)
+        console.log('[Blob] Upload concluído', blob.url)
       },
     })
     return NextResponse.json(jsonResponse)
@@ -30,4 +30,3 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: msg }, { status: 400 })
   }
 }
-
